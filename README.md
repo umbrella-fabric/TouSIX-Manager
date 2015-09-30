@@ -19,12 +19,10 @@ TouSIX is running in production with Pica8 whitebox OpenFlow switch with PicOS 2
 
 
 
-<img src=
-http://195.154.106.70/topo_touSIX.021.png" alt="alt text" title="Topology of TouSIX" width="600" height="500" />
+<img src="http://195.154.106.70/topo_touSIX.021.png" title="Topology of TouSIX" width="600" height="500" />
 
 
-<img src="
-http://195.154.106.70/soft_archi_tousix.001.png" alt="arch tousix" title="TouSIX software architecture" width="600" height="500" />
+<img src="http://195.154.106.70/soft_archi_tousix.001.png" title="TouSIX software architecture" width="600" height="500" />
 
     
 Installation
@@ -91,5 +89,6 @@ Then, you can launch the Django application by any method proposed on the Djnago
 Contact
 -------
 Rémy Lapeyrade (remy.lapeyrade@laas.fr)
+
 Marc Bruyère (marc.bruyere@laas.fr)
 
