@@ -15,12 +15,13 @@ The TouSIX-Manager has been designed to run on the Toulouse Internet eXchange at
 
 The figure below show the actual TouSIX deployement with 3 PoPs with each an Pica8 P-3290 and seprarated OpenFlow control channel network. Any OpenFflow 1.3 switch hardware or software could be used in theory. 
 
-TouSIX is running in production with Pica8 whitebox OpenFlow switch with PicOS 2.6 in OpenVSwitch mode. PicOS 2.6 provides is able to mainain the last OpenFlow table state even after a reboot or a power outage even is there is no OpenFlow controller  reachable. 
+TouSIX is running in production with Pica8 whitebox OpenFlow switch with PicOS 2.6 in OpenVSwitch mode. We have chosen PicOS 2.6 because it is able to maintain the last OpenFlow table state even after a reboot or a power outage even is there is no OpenFlow controller reachable. 
 
 
 
 <img src="http://195.154.106.70/topo_touSIX.021.png" title="Topology of TouSIX" width="600" height="500" />
 
+*Software architecture*
 
 <img src="http://195.154.106.70/soft_archi_tousix.001.png" title="TouSIX software architecture" width="600" height="500" />
 
@@ -83,8 +84,11 @@ There is one field to add in the settings file for the security issues:
 
 This option is used to verify the access on some critical components of the project. be sure to assign an address only used by your controller.
 
-Then, you can launch the Django application by any method proposed on the Djnago official website.
+Then, you can launch the Django application by any method proposed on the Django official website.
+After running Django you will be able to access the web gui interface to start adding the first IXP member router to the fabric.
+More documentation and screenshot will be added soon.
 
+For any questions please contact us !
 
 Contact
 -------
