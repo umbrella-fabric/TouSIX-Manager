@@ -84,10 +84,30 @@ There is one field to add in the settings file for the security issues:
 
 This option is used to verify the access on some critical components of the project. be sure to assign an address only used by your controller.
 
+Before launching the server, you need do ititialize the database :
+
+    ./manage.py migrate
+    
 Then, you can launch the Django application by any method proposed on the Django official website.
+Here is an example with the included web server:
+
+    ./manage.py runserver 8000
+
 After running Django you will be able to access the web gui interface to start adding the first IXP member router to the fabric.
 More documentation and screenshot will be added soon.
 
+### Ryu apps
+
+If you want to run the Ryu applications used in the TouSIX project, all the files are in the ryu-apps folder.
+
+You will need Ryu and requests python packages to launch these applications :
+
+    pip install ryu requests
+
+It is possible to launch all the applications in one instance. Here is a launch command example :
+
+    ryu-manager --config-file ./ryu-apps/ryu.conf --verbose ./ryu-apps/send_event_async.py                 ./ryu-apps/ofctl_rest_tousix.py ./ryu-apps/stateful_ctrl.py ./ryu-apps/send_stats.py
+   
 For any questions please contact us !
 
 Contact
