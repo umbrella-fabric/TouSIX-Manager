@@ -11,7 +11,7 @@
 </head>
 <body>
 <LINK rel=stylesheet type="text/css" href="{% static "css/metricsgraphics.css" %}">
-<a href="{% url "auth_logout" %}?next=/">Logout</a>
+<a href="{% url "auth_logout" %}">Logout</a>
 
 {% if not_member %}
     {% if member %}
@@ -33,12 +33,11 @@
     function FormChanged(dataForm){
         var data_serialized = $("#Fluxpost").serialize();
         var period = dataForm.elements['id_period'].value;
-        var unit = dataForm.elements["id_unit"].value;
-        jQuery.post("{% url "charts" %}", data_serialized, function datarecieved(data){dataUpdated(data,period,unit);}, "json");
+        jQuery.post("{% url "charts" %}", data_serialized, function datarecieved(data){dataUpdated(data,period);}, "json");
     }
     function dataUpdated(stats, period, unit) {
         // example : 2015-06-22T16:12:57+00:00
-        MG.convert.date(stats, "time" ,"%Y-%m-%dT%H:%M:%S+00:00");
+        MG.convert.date(stats, "time" ,"%Y-%m-%dT%H:%M:%S");
         var miss_resolution = "day";
         switch (period){
 
@@ -55,12 +54,13 @@
                 miss_resolution = "day";
 
         }
-        MG.data_graphic({
+        var mgArray = {
             title: "Result",
-            data: stats,
             width: 600,
             y_accessor: "value",
+            y_label: "bits/second",
             x_accessor: "time",
+            xax_start_at_min: true,
             missing_is_zero: true,
             missing_text: 'Aucune donnée disponible pour ce flux',
             missing_resolution: miss_resolution,
@@ -71,23 +71,23 @@
             xax_count: 4,
             mouseover: function (d, i) {
                 // custom format the rollover text, show days
-                var label = "ND";
-                if (unit == "packets")
-                {
-                    label = "packets/sec";
-                }
-                else if (unit == "bytes")
-                {
-                   label = "o/sec";
-                }
+                var label = "bits/sec";
                 var prefix = d3.formatPrefix(d.value);
                 d3.select('#Chart svg .mg-active-datapoint')
-                        .text(d.time.toUTCString() + ' '+ prefix.scale(d.value).toFixed(2) + ' '+ prefix.symbol + label );
+                        .text(d.time.toLocaleString() + ' '+ prefix.scale(d.value).toFixed(2) + ' '+ prefix.symbol + label );
             },
             target: '#Chart'
-        });
+        };
+        if (stats.length != 0) {
+            mgArray.data = stats;
+        }else
+        {
+            mgArray.chart_type = 'missing-data';
+        }
+        MG.data_graphic(mgArray);
     }
     jQuery.post("{% url "charts" %}", $("#Fluxpost").serialize(), function datarecieved(data){dataUpdated(data,"year","bytes");}, "json");
+    var updateInterval = setInterval(FormChanged, 300000, this.form);
 </script>
 {% endif %}
 </body>
