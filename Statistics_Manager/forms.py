@@ -54,8 +54,8 @@ class PeriodFrom(forms.Form):
     Choice form for select the period.
     """
     period = forms.ChoiceField(widget=forms.Select(attrs={"onchange": "FormChanged(this.form);"}),
-                               choices=(('hour', 'hour',),
-                                      ('day', 'day',),
+                               choices=(('day', 'day',),
+                                      ('week', 'week',),
                                       ('month', 'month',),
                                       ('year', 'year',),))
 
@@ -97,14 +97,14 @@ class DestinationForm(forms.Form):
         return self.cleaned_data["destination"]
 
 
-class FluxSelectionForm(SourceForm, DestinationForm, TypeForm, UnitForm, PeriodFrom):
+class FluxSelectionForm(DestinationForm, SourceForm, TypeForm, PeriodFrom):
     """
     Form for authenticated users
     """
     pass
 
 
-class RestrictedFluxSelectionForm(PeriodFrom, TypeForm, UnitForm):
+class RestrictedFluxSelectionForm(PeriodFrom, TypeForm):
     """
     Form for non-authenticated users
     """

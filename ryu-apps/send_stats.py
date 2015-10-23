@@ -4,7 +4,7 @@ __author__ = 'remy'
 from ryu.base import app_manager
 import logging
 import requests
-import time
+import time, datetime
 import json
 
 from oslo_config import cfg
@@ -24,7 +24,7 @@ class StatsSender(app_manager.RyuApp):
         super(StatsSender, self).__init__(*args, **kwargs)
         if self.load_config() is True:
             #Test servers defined
-
+            self.datetime = None
             self.servers = []
             for server in self.CONF.send_stats.servers:
                 try:
@@ -66,6 +66,7 @@ class StatsSender(app_manager.RyuApp):
             if self.servers.__len__() != 0:
                 switches = api.get_all_switch(self)
                 # Create stats request
+                self.datetime = datetime.datetime.now()
                 for switch in switches:
                     dpid = switch.dp.id
                     for table_id in self.CONF.send_stats.table_id:
@@ -104,9 +105,10 @@ class StatsSender(app_manager.RyuApp):
         content = json.dumps(flows)
         for server in self.servers:
             try:
-                r = requests.post(server+"/stats/reply", data=content, headers=headers)
-                if r.status_code != requests.codes.ok:
-                    LOG.error("Erreur n° " + str(r.status_code) + " sur le serveur " + server)
+                if self.datetime is not None:
+                    r = requests.post(server+"/stats/reply", data=content, headers=headers, params={"time": self.datetime.isoformat()})
+                    if r.status_code != requests.codes.ok:
+                        LOG.error("Erreur n° " + str(r.status_code) + " sur le serveur " + server)
             except requests.ConnectionError:
                 LOG.error("Erreur de connexion au serveur " + server)
             except requests.Timeout:
