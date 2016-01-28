@@ -34,16 +34,16 @@ This solution has been tested on Debian 8 "Jessie" server, but any GNU/Linux dis
 First, you must provide a MySQL database and install pip for Python 3.
 
 
-    apt-get install python3-pip build-essentials mysql-server mysql-client
+    apt-get install python-pip python-dev git build-essential mysql-server libmysqlclient-dev
 
 
 Then, you must use pip to install the python packages needed for TouSIX-Manager:
     
-    pip install -e https://github.com/umbrella-fabric/TouSIX-Manager.git
+    pip install git+https://github.com/umbrella-fabric/TouSIX-Manager.git
 
 It is possible to create a new django project to automate some procedures:
 
-    django-admin startproject ixp-manager
+    django-admin startproject ixp_manager
 
 Copy the settings.py.example given in the tousix-manager package into your project settings, and customize it following your needs.
 
