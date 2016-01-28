@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{%  load staticfiles %}
+{% block sb_admin_breadcrumb_active %}
+    <li class="active">
+
+        <i class="fa fa-play"></i> Statistiques
+
+    </li>
+{% endblock sb_admin_breadcrumb_active %}
+{% block sb_admin_subheading %}Statistiques{% endblock sb_admin_subheading %}
+{% block content %}
+    <form id="Fluxpost" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+    </form>
+
+                    <div class="row">
+                    <div class="col-lg-12">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-long-arrow-right"></i> Result</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div class="chart">
+                                    <div class="flot-chart-content" id="Chart"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+    {% endblock content %}
+{% block sb_admin_custom_js %}
+        {%  if not not_member %}
+<script type="text/javascript" src="{% static "js/jquery.min.js" %}"></script>
+            <script type="text/javascript" src="{% static "js/highstock.js" %}"></script>
+<script type="text/javascript" src="{% static "js/modules_highstock/exporting.js" %}"></script>
+<script type="text/javascript">
+    var ranges = [
+      { divider: 1e18 , suffix: 'P' },
+      { divider: 1e15 , suffix: 'E' },
+      { divider: 1e12 , suffix: 'T' },
+      { divider: 1e9 , suffix: 'G' },
+      { divider: 1e6 , suffix: 'M' },
+      { divider: 1e3 , suffix: 'k' }
+    ];
+
+    function formatNumber(n) {
+      for (var i = 0; i < ranges.length; i++) {
+        if (n >= ranges[i].divider) {
+          return (n / ranges[i].divider).toFixed(2).toString() + ' ' + ranges[i].suffix;
+        }
+      }
+      return n.toString();
+    }
+    function FormChanged(dataForm){
+        var data_serialized = $("#Fluxpost").serialize();
+        var period = dataForm.elements['id_period'].value;
+        jQuery.post("{% url "charts" %}", data_serialized, function datarecieved(data){dataUpdated(data,period);}, "json");
+    }
+    function dataUpdated(stats, period, unit) {
+        var statsDef = []
+    for (i = 0; i < stats.length; i++) {
+        statsDef[i] = [Date.parse(stats[i].time), stats[i].value]
+    };
+        $('#Chart').highcharts("StockChart",{
+            chart: {
+                zoomType: 'x'
+            },
+            title: {
+                text: ""
+            },
+            subtitle: {
+                text: document.ontouchstart === undefined ?
+                        'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'
+            },
+            xAxis: {
+                type: 'datetime'
+            },
+            yAxis: {
+                title: {
+                    text: 'Bandwidth'
+                },
+                min: 0
+            },
+            legend: {
+                enabled: false
+            },
+            plotOptions: {
+                area: {
+                    fillColor: {
+                        linearGradient: {
+                            x1: 0,
+                            y1: 0,
+                            x2: 0,
+                            y2: 1
+                        },
+                        stops: [
+                            [0, Highcharts.getOptions().colors[0]],
+                            [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                        ]
+                    },
+                    marker: {
+                        radius: 2
+                    },
+                    lineWidth: 1,
+                    states: {
+                        hover: {
+                            lineWidth: 1
+                        }
+                    },
+                    threshold: null
+                }
+            },
+
+            series: [{
+                type: 'area',
+                name: 'Bandwidth',
+                data: statsDef,
+                marker: {
+                    enabled: false
+                },
+                tooltip: {
+                    pointFormatter: function() {
+
+                        return '<b>'+ this.series.name+'</b> : '+ formatNumber(this.y) + 'Bit/sec';
+                    },
+                }
+            }]
+        });
+    };
+    jQuery.post("{% url "charts" %}", $("#Fluxpost").serialize(), function datarecieved(data){dataUpdated(data,"year","bits");}, "json");
+    var updateInterval = setInterval(FormChanged, 300000, this.form);
+
+</script>
+        {% endif %}
+{% endblock sb_admin_custom_js %}

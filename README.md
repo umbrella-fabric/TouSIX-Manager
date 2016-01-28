@@ -13,7 +13,7 @@ An statistic collector and web graphic renderer it also present allowing the IXP
 
 The TouSIX-Manager has been designed to run on the Toulouse Internet eXchange at the beginning and could be easily extended to run Umbrella Fabric on other IXP topology.
 
-The figure below show the actual TouSIX deployement with 3 PoPs with each an Pica8 P-3290 and seprarated OpenFlow control channel network. Any OpenFflow 1.3 switch hardware or software could be used in theory. 
+The figure below show the actual TouSIX deployment with 3 PoPs with each an Pica8 P-3290 and separated OpenFlow control channel network. Any OpenFlow 1.3 switch hardware or software could be used in theory. 
 
 TouSIX is running in production with Pica8 whitebox OpenFlow switch with PicOS 2.6 in OpenVSwitch mode. We have chosen PicOS 2.6 because it is able to maintain the last OpenFlow table state even after a reboot or a power outage even is there is no OpenFlow controller reachable. 
 
@@ -29,9 +29,9 @@ TouSIX is running in production with Pica8 whitebox OpenFlow switch with PicOS 2
 Installation
 ------------
 
-This solution has been tested on Debian 8 "Jessie" server, but any GNU/Linux distribtuion which can provide basic depedencies should work.
+This solution has been tested on Debian 8 "Jessie" server, but any GNU/Linux distribution which can provide basic dependencies should work.
 
-First, you must provide a MySQL database install pip for Python 3.
+First, you must provide a MySQL database and install pip for Python 3.
 
 
     apt-get install python3-pip build-essentials mysql-server mysql-client
@@ -39,59 +39,26 @@ First, you must provide a MySQL database install pip for Python 3.
 
 Then, you must use pip to install the python packages needed for TouSIX-Manager:
     
+    pip install -e https://github.com/umbrella-fabric/TouSIX-Manager.git
 
-    pip install django-bootstrap3 django django-formtools django-fsm django-fsm-admin django-localflavor django-registration-redux
+It is possible to create a new django project to automate some procedures:
 
+    django-admin startproject ixp-manager
 
-You can directly clone the project to get all the applications for running this project:
-    
+Copy the settings.py.example given in the tousix-manager package into your project settings, and customize it following your needs.
 
-    git clone https://github.com/umbrella-fabric/TouSIX-Manager.git
+Include the tousix-manager URLconf in urls.py:
 
+    url(r'^manager/', include('tousix-manager.urls'))
 
-In the Django settings file, be sure to activate at least these applications :
-    
+Before launching the server, you need do initialize the database :
 
-    INSTALLED_APPS = (
-        'django.contrib.admin.apps.SimpleAdminConfig',
-        'django.contrib.auth',
-        'django.contrib.contenttypes',
-        'django.contrib.sessions',
-        'django.contrib.messages',
-        'django.contrib.staticfiles',
-        'django.contrib.admindocs',
-        'django.contrib.sites',
-        'formtools',
-        'localflavor',
-        'registration',
-        'Authentication',
-        'Administration',
-        'fsm_admin',
-        'Statistics_Manager',
-        'BGP_Configuration',
-        'Rules_Deployment',
-        'Rules_Generation',
-        'bootstrap3',
-        'Log_Controller',
-        'Log_Statistics',
-        'Member_Manager',
-        'Database',
-    )
-
-There is one field to add in the settings file for the security issues:
-
-    ADDRESS_WHITELIST = ['127.0.0.1']
-
-This option is used to verify the access on some critical components of the project. be sure to assign an address only used by your controller.
-
-Before launching the server, you need do ititialize the database :
-
-    ./manage.py migrate
+    python ./manage.py migrate
     
 Then, you can launch the Django application by any method proposed on the Django official website.
 Here is an example with the included web server:
 
-    ./manage.py runserver 8000
+    python ./manage.py runserver 8000
 
 After running Django you will be able to access the web gui interface to start adding the first IXP member router to the fabric.
 More documentation and screenshot will be added soon.
