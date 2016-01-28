@@ -102,7 +102,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'TouSIX',
-        'PASSWORD': 'test1212ç',
+        'PASSWORD': 'test1212',
         'USER': 'root',
         'HOST': '127.0.0.1',
         'PORT': '3306',
